@@ -20,40 +20,33 @@ class RsyncDeployer extends AbstractDeployer
      */
     public function doDeploy(ServerInterface $server, array $options, $dryRun)
     {
-        $rsyncOptions = isset($options['rsync_options']) ? $options['rsync_options'] : '-azC --force --delete --progress';
+        $command = 'rsync ';
+        $command .= isset( $options['rsync_options'] ) ? $options['rsync_options'] : '-azC --force --delete --progress';
 
-        // Exclude file
-        $excludeFile = null;
-        if (isset($options['rsync_exclude'])) {
-            $excludeFile = $options['rsync_exclude'];
-            if (false === file_exists($excludeFile)) {
-                throw new \InvalidArgumentException(sprintf('The exclude file "%s" does not exist.', $excludeFile));
-            }
-
-            $excludeFile = realpath($excludeFile);
+        if ( 22 !== $server->getPort() ){
+            $command .= ' ' . sprintf( '-e "ssh -p%d"', $server->getPort() );
         }
 
-        $exclude = '';
-        if (null !== $excludeFile) {
-            $exclude = sprintf('--exclude-from \'%s\'', $excludeFile);
+        $command .= ' ./ ' . sprintf( '%s@%s:%s', $server->getUser(), $server->getHost(), $server->getDir() );
+
+        if ( isset( $options['rsync_exclude'] ) ){
+            $command .= ' ' . sprintf( '--exclude-from \'%s\'', $this->getExcludeFile( $options['rsync_exclude'] ) );
         }
 
-        $ssh = '';
-        if (22 !== $server->getPort()) {
-            $ssh = sprintf('-e "ssh -p%d"', $server->getPort());
+        if ( true === $dryRun ){
+            $command .= ' --dryrun';
         }
 
-        $login = sprintf('%s@%s:%s', $server->getUser(), $server->getHost(), $server->getDir());
+        return $this->executeCommand( $command );
+    }
 
-        $command = sprintf('rsync %s %s %s ./ %s  %s',
-                $dryRun,
-                $rsyncOptions,
-                $ssh,
-                $login,
-                $exclude
-        );
+    protected function getExcludeFile( $exclude_file )
+    {
+        if ( false === file_exists( $exclude_file ) ) {
+            throw new \InvalidArgumentException( sprintf( 'The exclude file "%s" does not exist.', $exclude_file ) );
+        }
 
-        system($command);
+        return realpath( $exclude_file );
     }
 
     /**
@@ -62,5 +55,10 @@ class RsyncDeployer extends AbstractDeployer
     public function getName()
     {
         return 'rsync';
+    }
+
+    public function executeCommand()
+    {
+        return system($command);
     }
 }
