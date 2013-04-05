@@ -5,15 +5,18 @@ use Plum\Server\Server;
 
 class RsyncDeployerTest extends \PHPUnit_Framework_TestCase
 {
+	/**
+	 * Test the deployer using different combinations.
+	 */
 	public function deployTestProvider()
 	{
 		$exclude_file 			= __DIR__ . '/RsyncDeployerTest.php';
-		$regular_server 		= new Server( 'localhost', 'julien', '/var/www/', 's3cret', 22, array() );
-		$different_path 		= new Server( 'localhost', 'julien', '/var/www/vhosts', 's3cret', 22, array() );
-		$different_user			= new Server( 'localhost', 'jose', '/var/www/vhosts', 's3cret', 22, array() );
-		$server_different_port 	= new Server( 'localhost', 'julien', '/var/www/vhosts', 's3cret', 50, array() );
-		$server_different_host 	= new Server( '123.123.123.123', 'jose', '/var/www/htdocs', 's3cret', 35, array() );
-		$server_without_dry_run = new Server( '123.123.123.123', 'jose', '/var/www/htdocs', 's3cret', 35, array( 'dry_run' => false ) );
+		$regular_server 		= new Server( 'localhost', 'julien', '/var/www/', 22, array() );
+		$different_path 		= new Server( 'localhost', 'julien', '/var/www/vhosts', 22, array() );
+		$different_user			= new Server( 'localhost', 'jose', '/var/www/vhosts', 22, array() );
+		$server_different_port 	= new Server( 'localhost', 'julien', '/var/www/vhosts', 50, array() );
+		$server_different_host 	= new Server( '123.123.123.123', 'jose', '/var/www/htdocs', 35, array() );
+		$server_without_dry_run = new Server( '123.123.123.123', 'jose', '/var/www/htdocs', 35, array( 'dry_run' => false ) );
 
 		return array(
 			'Normal deploy' 		=> array( $regular_server, 'rsync -azC --force --delete --progress ./ julien@localhost:/var/www/', array() ),
@@ -44,7 +47,7 @@ class RsyncDeployerTest extends \PHPUnit_Framework_TestCase
 	{
 		$this->setExpectedException( '\InvalidArgumentException' );
 		$deployer = new \Plum\Deployer\RsyncDeployer();
-		$deployer->deploy( new Server( 'localhost', 'julien', '/var/www/', 's3cret', 22, array() ), array( 'rsync_exclude' => 'not existing file' ) );
+		$deployer->deploy( new Server( 'localhost', 'julien', '/var/www/', 22, array() ), array( 'rsync_exclude' => 'not existing file' ) );
 	}
 
 	public function testGetDeployerName()

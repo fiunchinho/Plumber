@@ -49,24 +49,57 @@ class Server implements ServerInterface
     protected $password;
 
     /**
+     * The path to the public key for authentication
+     *
+     * @var string
+     */
+    protected $public_key;
+
+    /**
+     * The path to the private key for authentication
+     *
+     * @var string
+     */
+    protected $private_key;
+
+    /**
      * A list of options
      *
      * @var array
      */
     protected $options;
 
-    public function __construct($host, $user, $dir, $password = null, $port = 22, $options = array())
+    public function __construct($host, $user, $dir, $port = 22, $options = array())
     {
         if ('/' !== substr($dir, -1)) {
             $dir .= '/';
         }
 
         $this->host     = $host;
-        $this->port     = $port;
         $this->user     = $user;
+        $this->port     = $port;
         $this->dir      = $dir;
-        $this->password = $password;
         $this->options  = $options;
+    }
+
+    public function getPublicKey()
+    {
+        return $this->public_key;
+    }
+
+    public function setPublicKey( $path )
+    {
+        $this->public_key = $path;
+    }
+
+    public function getPrivateKey()
+    {
+        return $this->private_key;
+    }
+
+    public function setPrivateKey( $path )
+    {
+        $this->private_key = $path;
     }
 
     /**
@@ -109,12 +142,9 @@ class Server implements ServerInterface
         return $this->password;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function getHiddenPassword()
+    public function setPassword( $password )
     {
-        return str_repeat('*', strlen($this->password));
+        $this->password = $password;
     }
 
     /**

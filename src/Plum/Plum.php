@@ -19,66 +19,24 @@ class Plum
     /**
      * @var array
      */
-    protected $servers;
+    protected $servers = array();
 
     /**
-     * @var array
+     * Interface to run SSH commands
+     * @var object
      */
-    protected $deployers;
+    protected $ssh;
 
     /**
-     * List of options
-     * @var array
+     * The tool to deploy the code
+     * @var DeployerInterface
      */
-    protected $options;
+    protected $deployer = array();
 
-    public function __construct()
+    public function __construct( DeployerInterface $deployer, $ssh_commands )
     {
-        $this->servers   = array();
-        $this->deployers = array();
-        $this->options   = array();
-    }
-
-    /**
-     * Registers a deployer
-     *
-     * @param DeployerInterface $deployer
-     *
-     * @return \Plum\Plum
-     */
-    public function registerDeployer(DeployerInterface $deployer)
-    {
-        if (null !== $deployer) {
-            $this->deployers[$deployer->getName()] = $deployer;
-        }
-
-        return $this;
-    }
-
-    /**
-     * Returns deployers
-     *
-     * @return array
-     */
-    public function getDeployers()
-    {
-        return $this->deployers;
-    }
-
-    /**
-     * Returns a deployer
-     *
-     * @param string $deployer The deployer name
-     *
-     * @return \Plum\Deployer\DeployerInterface
-     */
-    public function getDeployer($deployer)
-    {
-        if (false === isset($this->deployers[$deployer])) {
-            throw new \InvalidArgumentException(sprintf('The deployer "%s" is not registered.', $deployer));
-        }
-
-        return $this->deployers[$deployer];
+        $this->deployer = $deployer;
+        $this->ssh      = $ssh_commands;
     }
 
     /**
@@ -91,118 +49,22 @@ class Plum
      */
     public function addServer($name, ServerInterface $server)
     {
-        if (null === $server) {
-            throw new \InvalidArgumentException('The server can not be null.');
-        }
-
-        if (true === isset($this->servers[$name])) {
-            throw new \InvalidArgumentException(sprintf('The server "%s" is already registered.', $name));
-        }
-
         $this->servers[$name] = $server;
-
-        return $this;
-    }
-
-    /**
-     * Adds a list of servers
-     *
-     * @param array $servers
-     *
-     * @return \Plum\Plum
-     */
-    public function setServers(array $servers)
-    {
-        foreach ($servers as $name => $server) {
-            $this->addServer($name, $server);
-        }
-
-        return $this;
-    }
-
-    /**
-     * Remove a server
-     *
-     * @param string $name
-     *
-     * @return \Plum\Plum
-     */
-    public function removeServer($name)
-    {
-        unset($this->servers[$name]);
-
-        return $this;
-    }
-
-    /**
-     * Returns a server
-     *
-     * @param type $server The server name
-     *
-     * @return \Plum\Server\ServerInterface
-     */
-    public function getServer($server)
-    {
-        if (!isset($this->servers[$server])) {
-            throw new \InvalidArgumentException(sprintf('The server "%s" is not registered.', $server));
-        }
-
-        return $this->servers[$server];
-    }
-
-    /**
-     * Returns servers
-     *
-     * @return array
-     */
-    public function getServers()
-    {
-        return $this->servers;
     }
 
     /**
      * Deploys to the server using the deployer
      *
-     * @param string $server   The name of the server
-     * @param string $deployer The name of the deployer
+     * @param string $server_name   The name of the server
      */
-    public function deploy($server, $deployer)
+    public function deploy( $server_name )
     {
-        $server   = $this->getServer($server);
-        $deployer = $this->getDeployer($deployer);
-
-        return $deployer->deploy($server, $this->options);
-    }
-
-    public function setOptions(array $options)
-    {
-        $this->options = $options;
-    }
-
-    /**
-     * Adds a global option
-     *
-     * @param string $key
-     * @param string $value
-     */
-    public function addOption($key, $value)
-    {
-        $this->options[$key] = $value;
-    }
-
-    /**
-     * Returns the array of options
-     *
-     * @param string $server The server name
-     */
-    public function getOptions($server = null)
-    {
-        if (null === $server) {
-            return $this->options;
+        if ( !array_key_exists( $server_name, $this->servers ) ){
+            throw new \InvalidArgumentException( 'Unknown server: '. $server_name );
         }
 
-        $server = $this->getServer($server);
-
-        return array_merge($this->options, $server->getOptions());
+        return
+            $this->deployer->deploy( $this->servers[$server_name], array() )
+                && $this->ssh->executeCommands( $this->servers[$server_name], array() );
     }
 }

@@ -17,14 +17,15 @@ class ServerTest extends \PHPUnit_Framework_TestCase
 {
     public function testServerArg()
     {
-        $server = new Server('localhost', 'julien', '/var/www/', 's3cret', 1234, array('dry_run' => true));
+        $server = new Server('localhost', 'julien', '/var/www/', 1234, array('dry_run' => true));
 
         $this->assertEquals('localhost', $server->getHost());
         $this->assertEquals('julien', $server->getUser());
         $this->assertEquals('/var/www/', $server->getDir());
-        $this->assertEquals('s3cret', $server->getPassword());
         $this->assertEquals(1234, $server->getPort());
         $this->assertEquals(array('dry_run' => true), $server->getOptions());
+        $server->setPassword( $password = 'password' );
+        $this->assertEquals( $password, $server->getPassword() );
     }
 
     public function testServerDefaultArg()
