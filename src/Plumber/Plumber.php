@@ -3,6 +3,7 @@ namespace Plumber;
 
 use Plumber\Deployer\DeployerInterface;
 use Plumber\Server\ServerInterface;
+use Plumber\Server\SshCommandExecuter;
 
 class Plumber
 {
@@ -13,7 +14,7 @@ class Plumber
 
     /**
      * Interface to run SSH commands
-     * @var object
+     * @var SshCommandExecuter
      */
     protected $ssh;
 
@@ -23,7 +24,7 @@ class Plumber
      */
     protected $deployer = array();
 
-    public function __construct( DeployerInterface $deployer, $ssh_commands )
+    public function __construct( DeployerInterface $deployer, SshCommandExecuter $ssh_commands )
     {
         $this->deployer = $deployer;
         $this->ssh      = $ssh_commands;
@@ -36,7 +37,7 @@ class Plumber
      * @param \Plumber\Server\ServerInterface $server
      *
      */
-    public function addServer($name, ServerInterface $server)
+    public function addServer( $name, ServerInterface $server )
     {
         $this->servers[$name] = $server;
     }
@@ -46,14 +47,16 @@ class Plumber
      *
      * @param string $server_name   The name of the server
      */
-    public function deploy( $server_name )
+    public function deploy( $server_name, array $options = array() )
     {
         if ( !array_key_exists( $server_name, $this->servers ) ){
             throw new \InvalidArgumentException( 'Unknown server: '. $server_name );
         }
 
+        $commands = ( array_key_exists( 'commands', $options ) ) ? $options['commands'] : array();
+
         return
             $this->deployer->deploy( $this->servers[$server_name], array() )
-                && $this->ssh->executeCommands( $this->servers[$server_name], array() );
+                && $this->ssh->execute( $this->servers[$server_name], $commands );
     }
 }

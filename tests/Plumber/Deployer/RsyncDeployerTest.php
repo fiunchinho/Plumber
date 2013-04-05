@@ -11,12 +11,11 @@ class RsyncDeployerTest extends \PHPUnit_Framework_TestCase
 	public function deployTestProvider()
 	{
 		$exclude_file 			= __DIR__ . '/RsyncDeployerTest.php';
-		$regular_server 		= new Server( 'localhost', 'julien', '/var/www/', 22, array() );
-		$different_path 		= new Server( 'localhost', 'julien', '/var/www/vhosts', 22, array() );
-		$different_user			= new Server( 'localhost', 'jose', '/var/www/vhosts', 22, array() );
-		$server_different_port 	= new Server( 'localhost', 'julien', '/var/www/vhosts', 50, array() );
-		$server_different_host 	= new Server( '123.123.123.123', 'jose', '/var/www/htdocs', 35, array() );
-		$server_without_dry_run = new Server( '123.123.123.123', 'jose', '/var/www/htdocs', 35, array( 'dry_run' => false ) );
+		$regular_server 		= new Server( 'localhost', 'julien', '/var/www/', 22 );
+		$different_path 		= new Server( 'localhost', 'julien', '/var/www/vhosts', 22 );
+		$different_user			= new Server( 'localhost', 'jose', '/var/www/vhosts', 22 );
+		$server_different_port 	= new Server( 'localhost', 'julien', '/var/www/vhosts', 50 );
+		$server_different_host 	= new Server( '123.123.123.123', 'jose', '/var/www/htdocs', 35 );
 
 		return array(
 			'Normal deploy' 		=> array( $regular_server, 'rsync -azC --force --delete --progress ./ julien@localhost:/var/www/', array() ),
@@ -25,7 +24,6 @@ class RsyncDeployerTest extends \PHPUnit_Framework_TestCase
 			'Deploy with excludes and dry run' 					=> array( $different_path, 'rsync -azC --force --delete --progress ./ julien@localhost:/var/www/vhosts/ --exclude-from \'' . $exclude_file . '\' --dryrun', array( 'dry_run' => true, 'rsync_exclude' => $exclude_file ) ),
 			'Deploy with dry run on different port and path' 	=> array( $server_different_port, 'rsync -azC --force --delete --progress -e "ssh -p50" ./ julien@localhost:/var/www/vhosts/ --dryrun', array( 'dry_run' => true ) ),
 			'Deploy with dry run on different port, server, path and username' => array( $server_different_host, 'rsync -azC --force --delete --progress -e "ssh -p35" ./ jose@123.123.123.123:/var/www/htdocs/ --dryrun', array( 'dry_run' => true ) ),
-			'Deploy with dry run but server disable it' => array( $server_without_dry_run, 'rsync -azC --force --delete --progress -e "ssh -p35" ./ jose@123.123.123.123:/var/www/htdocs/', array( 'dry_run' => true ) ),
 		);
 	}
 
@@ -46,8 +44,9 @@ class RsyncDeployerTest extends \PHPUnit_Framework_TestCase
 	public function testRsyncDeployWithNotExistingRsyncExcludeFile()
 	{
 		$this->setExpectedException( '\InvalidArgumentException' );
-		$deployer = new \Plumber\Deployer\RsyncDeployer();
-		$deployer->deploy( new Server( 'localhost', 'julien', '/var/www/', 22, array() ), array( 'rsync_exclude' => 'not existing file' ) );
+		$server 	= new Server( 'localhost', 'julien', '/var/www/', 22 );
+		$deployer 	= new \Plumber\Deployer\RsyncDeployer();
+		$deployer->deploy( $server, array( 'rsync_exclude' => 'not existing file' ) );
 	}
 
 	public function testGetDeployerName()

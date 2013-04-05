@@ -1,10 +1,10 @@
 <?php
 namespace Plumber\Tests\Deployer;
 
-use Plumber\Deployer\SshDeployer;
+use Plumber\Server\SshCommandExecuter;
 use Plumber\Server\Server;
 
-class SshDeployerTest extends \PHPUnit_Framework_TestCase
+class SshCommandExecuterTest extends \PHPUnit_Framework_TestCase
 {
 	public static $server;
 
@@ -17,38 +17,36 @@ class SshDeployerTest extends \PHPUnit_Framework_TestCase
 
 	public function testsWithoutCommandsDoesNothing()
 	{
-		$ssh_connection = $this->getMock( '\Plumber\SshConnection' );
+		$ssh_connection = $this->getMock( '\Plumber\Server\SshConnection' );
 		$ssh_connection->expects( $this->never() )->method( 'connect' );
 		$ssh_connection->expects( $this->never() )->method( 'authenticate' );
 		$ssh_connection->expects( $this->never() )->method( 'execute' );
 		$ssh_connection->expects( $this->never() )->method( 'disconnect' );
 
-		$this->deployer = new SshDeployer( $ssh_connection );
-		$this->assertFalse( $this->deployer->executeCommands( self::$server, array() ), 'The response is false when no commands have been executed.' );
+		$this->deployer = new SshCommandExecuter( $ssh_connection );
+		$this->assertTrue( $this->deployer->execute( self::$server, array() ), 'The response is false when no commands have been executed.' );
 	}
 
 	public function testExecutingACommand()
 	{
-		$options 	= array( 'commands' => array( 'ls -lah' ) );
+		$commands = array( 'ls -lah' );
 
-		$ssh_connection = $this->getMock( '\Plumber\SshConnection' );
+		$ssh_connection = $this->getMock( '\Plumber\Server\SshConnection' );
 		$ssh_connection->expects( $this->once() )->method( 'connect' );
 		$ssh_connection->expects( $this->once() )->method( 'authenticate' )->with( self::$server->getUser(), self::$server->getPublicKey(), self::$server->getPrivateKey() );
 		$ssh_connection->expects( $this->at(2) )->method( 'execute' )->with( $this->equalTo( 'cd /var/www/' ) );
 		$ssh_connection->expects( $this->at(3) )->method( 'execute' )->with( $this->equalTo( 'ls -lah' ) );
 		$ssh_connection->expects( $this->once() )->method( 'disconnect' );
 
-		$this->deployer = new SshDeployer( $ssh_connection );
-		$this->assertTrue( $this->deployer->executeCommands( self::$server, $options ), 'Commands must be succesfull' );
+		$this->deployer = new SshCommandExecuter( $ssh_connection );
+		$this->assertTrue( $this->deployer->execute( self::$server, $commands ), 'Commands must be succesfull' );
 	}
 
 	public function testExecutingSeveralCommands()
 	{
-		$options 	= array(
-			'commands' => array( 'ls -lah', 'pwd', 'whoami' )
-		);
+		$commands = array( 'ls -lah', 'pwd', 'whoami' );
 
-		$ssh_connection = $this->getMock( '\Plumber\SshConnection' );
+		$ssh_connection = $this->getMock( '\Plumber\Server\SshConnection' );
 		$ssh_connection->expects( $this->once() )->method( 'connect' );
 		$ssh_connection->expects( $this->once() )->method( 'authenticate' )->with( self::$server->getUser(), self::$server->getPublicKey(), self::$server->getPrivateKey() );
 		$ssh_connection->expects( $this->at(2) )->method( 'execute' )->with( $this->equalTo( 'cd /var/www/' ) );
@@ -57,7 +55,7 @@ class SshDeployerTest extends \PHPUnit_Framework_TestCase
 		$ssh_connection->expects( $this->at(5) )->method( 'execute' )->with( $this->equalTo( 'whoami' ) );
 		$ssh_connection->expects( $this->once() )->method( 'disconnect' );
 
-		$this->deployer = new SshDeployer( $ssh_connection );
-		$this->assertTrue( $this->deployer->executeCommands( self::$server, $options ), 'Commands must be succesfull' );
+		$this->deployer = new SshCommandExecuter( $ssh_connection );
+		$this->assertTrue( $this->deployer->execute( self::$server, $commands ), 'Commands must be succesfull' );
 	}
 }

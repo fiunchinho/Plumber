@@ -1,5 +1,5 @@
 <?php
-namespace Plumber;
+namespace Plumber\Server;
 
 use Plumber\Exception\SshException;
 

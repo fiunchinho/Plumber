@@ -27,9 +27,4 @@ interface ServerInterface
      * Returns the password
      */
     function getPassword();
-
-    /**
-     * Returns options
-     */
-    function getOptions();
 }

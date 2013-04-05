@@ -59,7 +59,7 @@ class Server implements ServerInterface
      */
     protected $options;
 
-    public function __construct($host, $user, $dir, $port = 22, $options = array())
+    public function __construct($host, $user, $dir, $port = 22 )
     {
         if ('/' !== substr($dir, -1)) {
             $dir .= '/';
@@ -69,7 +69,6 @@ class Server implements ServerInterface
         $this->user     = $user;
         $this->port     = $port;
         $this->dir      = $dir;
-        $this->options  = $options;
     }
 
     public function getPublicKey()
@@ -135,13 +134,5 @@ class Server implements ServerInterface
     public function setPassword( $password )
     {
         $this->password = $password;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getOptions()
-    {
-        return $this->options;
     }
 }

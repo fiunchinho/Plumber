@@ -5,26 +5,13 @@ use Plumber\Server\ServerInterface;
 
 class RsyncDeployer implements DeployerInterface
 {
-    public function deploy( ServerInterface $server, array $options = array() )
-    {
-        $options = array_merge( $options, $server->getOptions() );
-
-        $dryRun = false;
-        if ( isset($options['dry_run']) && $options['dry_run'] ) {
-            $dryRun = true;
-        }
-
-        return $this->doDeploy($server, $options, $dryRun);
-    }
-
     /**
      * Do a deploy
      *
      * @param ServerInterface $server  The server
      * @param array           $options The options
-     * @param Boolean         $dryRun  Dry run mode
      */
-    protected function doDeploy(ServerInterface $server, array $options, $dryRun)
+    public function deploy( ServerInterface $server, array $options = array() )
     {
         $command = 'rsync ';
         $command .= isset( $options['rsync_options'] ) ? $options['rsync_options'] : '-azC --force --delete --progress';
@@ -39,13 +26,14 @@ class RsyncDeployer implements DeployerInterface
             $command .= ' ' . sprintf( '--exclude-from \'%s\'', $this->getExcludeFile( $options['rsync_exclude'] ) );
         }
 
-        if ( true === $dryRun ){
+        if ( array_key_exists( 'dry_run', $options ) && ( true === $options['dry_run'] ) ){
             $command .= ' --dryrun';
         }
 
         return $this->executeCommand( $command );
     }
 
+    
     protected function getExcludeFile( $exclude_file )
     {
         if ( false === file_exists( $exclude_file ) ) {

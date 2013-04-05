@@ -1,4 +1,4 @@
-# Plum
+# Plumber
 
 [![Build Status](https://secure.travis-ci.org/aerialls/Plum.png)](http://travis-ci.org/aerialls/Plum)
 
@@ -6,21 +6,27 @@ An object oriented deployer library
 
 ## Installation and configuration
 
-Plum does not provide and autoloader but follow the PSR-0 convention.
+Plumber follows the PSR-0 convention, so you can use Composer autoloader.
 
-    $plum = new \Plum\Plum();
+    $options = array(
+        'dry_run' => true, // Rsync will run as dry run mode, which only shows the output but does not deploy anything
+        'rsync_exclude' => 'excludes.txt', // File used by rsync to exclude files.
+        'rsync_options' => '-az', // You can even overwrite the default rsync parameters and use your own arguments
+        'commands' => array( // Commands to execute in the server being deployed
+            'cd /var/www',
+            'ls'
+        )
+    );
 
-    // Add global options for all the servers
-    $plum->setOptions(array(
-        'dry_run'     => true,
-        'excludeFile' => __DIR__.'/exclude.txt'
-    ));
+    $deployer               = new \Plumber\Deployer\RsyncDeployer();
+    $ssh_command_executer   = new \Plumber\Server\SshCommandExecuter( new \Plumber\Server\SshConnection() );
 
-    // Register the rsync deployer
-    $plum->registerDeployer(new \Plum\Deployer\RsyncDeployer());
+    $plumber = new \Plumber\Plumber( $deployer, $ssh_command_executer );
 
     // Add your server
-    $plum->addServer('server_name', new \Plum\Server\Server('host', 'username', '/path/to/my/website'));
+    $plumber->addServer( 'production', new \Plumber\Server\Server( 'your_server_ip_or_hostname', 'username', '/path/to/my/website' ) );
+    $plumber->addServer( 'dev', new \Plumber\Server\Server( 'your_server_ip_or_hostname', 'username', '/path/to/my/website' ) );
 
     // Let's go!
-    $plum->deploy('bender', 'rsync');
+    $plumber->deploy( 'production', $options );
+    $plumber->deploy( 'dev', $options );
