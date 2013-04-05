@@ -2,7 +2,7 @@
 
 [![Build Status](https://secure.travis-ci.org/fiunchinho/Plumber.png)](http://travis-ci.org/fiunchinho/Plumber)
 
-An object oriented deployer library. This library is heavily inspired by the [Plum|https://github.com/aerialls/Plum] library, but I've tried a different approach.
+An object oriented deployer library. This library is heavily inspired by the [Plum](https://github.com/aerialls/Plum "Plum") library, but I've tried a different approach.
 
 ## Installation and configuration
 
