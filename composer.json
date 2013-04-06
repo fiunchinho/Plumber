@@ -1,21 +1,21 @@
 {
-    "name": "madalynn/plum",
+    "name": "fiunchinho/plumber",
     "type": "library",
     "description": "An object oriented deployer library",
     "keywords": ["deploy", "rsync", "ssh"],
-    "homepage": "http://www.madalynn.eu",
+    "homepage": "http://github.com/fiunchinho/Plumber",
     "license": "MIT",
     "authors": [
         {
-            "name": "Julien Brochet",
-            "email": "mewt@madalynn.eu",
-            "homepage": "http://julien.brochet.me"
+            "name": "Jose Armesto",
+            "email": "jose@armesto.net",
+            "homepage": "http://armesto.net"
         }
     ],
     "require": {
         "php": ">=5.3.2"
     },
     "autoload": {
-        "psr-0": { "Plum": "src/" }
+        "psr-0": { "Plumber": "src/" }
     }
 }

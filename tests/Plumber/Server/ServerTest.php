@@ -15,6 +15,10 @@ class ServerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(1234, $server->getPort());
         $server->setPassword( $password = 'password' );
         $this->assertEquals( $password, $server->getPassword() );
+        $server->setPublicKey( $public_key = 'public' );
+        $this->assertEquals( $public_key, $server->getPublicKey() );
+        $server->setPrivateKey( $private_key = 'private' );
+        $this->assertEquals( $private_key, $server->getPrivateKey() );
     }
 
     public function testServerDefaultArg()

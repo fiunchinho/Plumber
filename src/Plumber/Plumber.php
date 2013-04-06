@@ -8,6 +8,12 @@ use Plumber\Server\SshCommandExecuter;
 class Plumber
 {
     /**
+     * Default value to use for the rsync dry_run parameter
+     * @var boolean
+     */
+    const DEFAULT_DRY_RUN = false;
+
+    /**
      * @var array
      */
     protected $servers = array();
@@ -53,10 +59,11 @@ class Plumber
             throw new \InvalidArgumentException( 'Unknown server: '. $server_name );
         }
 
-        $commands = ( array_key_exists( 'commands', $options ) ) ? $options['commands'] : array();
+        $commands   = ( array_key_exists( 'commands', $options ) ) ? $options['commands'] : array();
+        $dry_run    = ( array_key_exists( 'dry_run', $options ) ) ? $options['dry_run'] : self::DEFAULT_DRY_RUN;
 
-        return
-            $this->deployer->deploy( $this->servers[$server_name], array() )
-                && $this->ssh->execute( $this->servers[$server_name], $commands );
+        $this->deployer->deploy( $this->servers[$server_name], $options ) && !$dry_run && $this->ssh->execute( $this->servers[$server_name], $commands );
+
+        return true;
     }
 }
