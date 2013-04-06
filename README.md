@@ -10,10 +10,10 @@ Plumber follows the PSR-0 convention, so you can use Composer autoloader.
 
     // Options. Here you can define which unix commands you want to execute in the server
     $options = array(
-        'dry_run' => true, // Rsync will run as dry run mode, which only shows the output but does not deploy anything
-        'rsync_exclude' => 'excludes.txt', // File used by rsync to exclude files.
-        'rsync_options' => '-az', // You can even overwrite the default rsync parameters and use your own arguments
-        'commands' => array( // Commands to execute in the server being deployed
+        'dry_run' => true, // Optional: Default to false. If set to true, Rsync will run as dry-run mode, which only shows the output but doesn't deploy anything
+        'rsync_exclude' => 'excludes.txt', // Optional. File used by rsync to exclude files.
+        'rsync_options' => '-az', // Optional: Default to "-azC --force --delete --progress". You can overwrite the default rsync parameters and use your own arguments
+        'commands' => array( // Optional. Commands to execute in the server being deployed. The commands'll be executed in the path defined by the server
             'php app/console doctrine:schema:create',
             'php app/console cache:warmup'
         )
@@ -33,6 +33,7 @@ Plumber follows the PSR-0 convention, so you can use Composer autoloader.
     $plumber->deploy( 'dev', $options );
 
 If you prefer to deploy using git pull, instead of using rsync, you can use the dummy rsync deployer. The following code would connect to the server that you define, and execute three commands there.
+
     // Options. Here you can define which unix commands you want to execute in the server
     $options = array(
         'commands' => array( // Commands to execute in the server being deployed
