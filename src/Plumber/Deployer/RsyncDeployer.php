@@ -27,7 +27,7 @@ class RsyncDeployer implements DeployerInterface
         }
 
         if ( array_key_exists( 'dry_run', $options ) && ( true === $options['dry_run'] ) ){
-            $command .= ' --dryrun';
+            $command .= ' --dry-run';
         }
 
         return $this->executeCommand( $command );
@@ -54,7 +54,7 @@ class RsyncDeployer implements DeployerInterface
     /**
      * Method to execute a command in the system. We need it to execute rsycn in the operating system.
      */
-    public function executeCommand()
+    public function executeCommand( $command )
     {
         return system($command);
     }

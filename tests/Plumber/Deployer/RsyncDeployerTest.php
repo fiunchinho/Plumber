@@ -19,11 +19,11 @@ class RsyncDeployerTest extends \PHPUnit_Framework_TestCase
 
 		return array(
 			'Normal deploy' 		=> array( $regular_server, 'rsync -azC --force --delete --progress ./ julien@localhost:/var/www/', array() ),
-			'Deploy with dry run' 	=> array( $different_user, 'rsync -azC --force --delete --progress ./ jose@localhost:/var/www/vhosts/ --dryrun', array( 'dry_run' => true ) ),
+			'Deploy with dry run' 	=> array( $different_user, 'rsync -azC --force --delete --progress ./ jose@localhost:/var/www/vhosts/ --dry-run', array( 'dry_run' => true ) ),
 			'Deploy with excludes' 	=> array( $different_path, 'rsync -azC --force --delete --progress ./ julien@localhost:/var/www/vhosts/ --exclude-from \'' . $exclude_file . '\'', array( 'rsync_exclude' => $exclude_file ) ),
-			'Deploy with excludes and dry run' 					=> array( $different_path, 'rsync -azC --force --delete --progress ./ julien@localhost:/var/www/vhosts/ --exclude-from \'' . $exclude_file . '\' --dryrun', array( 'dry_run' => true, 'rsync_exclude' => $exclude_file ) ),
-			'Deploy with dry run on different port and path' 	=> array( $server_different_port, 'rsync -azC --force --delete --progress -e "ssh -p50" ./ julien@localhost:/var/www/vhosts/ --dryrun', array( 'dry_run' => true ) ),
-			'Deploy with dry run on different port, server, path and username' => array( $server_different_host, 'rsync -azC --force --delete --progress -e "ssh -p35" ./ jose@123.123.123.123:/var/www/htdocs/ --dryrun', array( 'dry_run' => true ) ),
+			'Deploy with excludes and dry run' 					=> array( $different_path, 'rsync -azC --force --delete --progress ./ julien@localhost:/var/www/vhosts/ --exclude-from \'' . $exclude_file . '\' --dry-run', array( 'dry_run' => true, 'rsync_exclude' => $exclude_file ) ),
+			'Deploy with dry run on different port and path' 	=> array( $server_different_port, 'rsync -azC --force --delete --progress -e "ssh -p50" ./ julien@localhost:/var/www/vhosts/ --dry-run', array( 'dry_run' => true ) ),
+			'Deploy with dry run on different port, server, path and username' => array( $server_different_host, 'rsync -azC --force --delete --progress -e "ssh -p35" ./ jose@123.123.123.123:/var/www/htdocs/ --dry-run', array( 'dry_run' => true ) ),
 		);
 	}
 
