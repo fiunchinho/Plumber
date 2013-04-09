@@ -34,8 +34,8 @@ class SshCommandExecuterTest extends \PHPUnit_Framework_TestCase
 		$ssh_connection = $this->getMock( '\Plumber\Server\SshConnection' );
 		$ssh_connection->expects( $this->once() )->method( 'connect' );
 		$ssh_connection->expects( $this->once() )->method( 'authenticate' )->with( self::$server->getUser(), self::$server->getPublicKey(), self::$server->getPrivateKey() );
-		$ssh_connection->expects( $this->at(2) )->method( 'execute' )->with( $this->equalTo( 'cd /var/www/' ) );
-		$ssh_connection->expects( $this->at(3) )->method( 'execute' )->with( $this->equalTo( 'ls -lah' ) );
+		// $ssh_connection->expects( $this->at(2) )->method( 'execute' )->with( $this->equalTo( 'cd /var/www/' ) );
+		$ssh_connection->expects( $this->at(2) )->method( 'execute' )->with( $this->equalTo( 'cd /var/www/ && ls -lah' ) );
 		$ssh_connection->expects( $this->once() )->method( 'disconnect' );
 
 		$this->deployer = new SshCommandExecuter( $ssh_connection );
@@ -49,10 +49,10 @@ class SshCommandExecuterTest extends \PHPUnit_Framework_TestCase
 		$ssh_connection = $this->getMock( '\Plumber\Server\SshConnection' );
 		$ssh_connection->expects( $this->once() )->method( 'connect' );
 		$ssh_connection->expects( $this->once() )->method( 'authenticate' )->with( self::$server->getUser(), self::$server->getPublicKey(), self::$server->getPrivateKey() );
-		$ssh_connection->expects( $this->at(2) )->method( 'execute' )->with( $this->equalTo( 'cd /var/www/' ) );
-		$ssh_connection->expects( $this->at(3) )->method( 'execute' )->with( $this->equalTo( 'ls -lah' ) );
-		$ssh_connection->expects( $this->at(4) )->method( 'execute' )->with( $this->equalTo( 'pwd' ) );
-		$ssh_connection->expects( $this->at(5) )->method( 'execute' )->with( $this->equalTo( 'whoami' ) );
+		// $ssh_connection->expects( $this->at(2) )->method( 'execute' )->with( $this->equalTo( 'cd /var/www/' ) );
+		$ssh_connection->expects( $this->at(2) )->method( 'execute' )->with( $this->equalTo( 'cd /var/www/ && ls -lah' ) );
+		$ssh_connection->expects( $this->at(3) )->method( 'execute' )->with( $this->equalTo( 'cd /var/www/ && pwd' ) );
+		$ssh_connection->expects( $this->at(4) )->method( 'execute' )->with( $this->equalTo( 'cd /var/www/ && whoami' ) );
 		$ssh_connection->expects( $this->once() )->method( 'disconnect' );
 
 		$this->deployer = new SshCommandExecuter( $ssh_connection );

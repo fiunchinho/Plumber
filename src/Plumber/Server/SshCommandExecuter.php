@@ -35,8 +35,7 @@ class SshCommandExecuter
         $this->ssh->connect( $server->getHost(), $server->getPort() );
         $this->ssh->authenticate( $server->getUser(), $server->getPublicKey(), $server->getPrivateKey() );
 
-        $this->ssh->execute( 'cd ' . $server->getDir() ); // Move to the right path
-        $this->executeCommands( $commands );
+        $this->executeCommands( $commands, $server->getDir() );
         $this->ssh->disconnect();
 
         return true;
@@ -46,11 +45,12 @@ class SshCommandExecuter
      * Execute the commands in the remote server via SSH.
      *
      * @param array $commands The commands to execute
+     * @param string $path Path where to execute the commands
      */
-    protected function executeCommands( array $commands )
+    protected function executeCommands( array $commands, $path )
     {
         foreach ( $commands as $command ) {
-            $this->ssh->execute( $command );
+            $this->ssh->execute( 'cd ' . $path . ' && ' . $command );
         }
     }
 }
