@@ -59,6 +59,12 @@ class Server implements ServerInterface
      */
     protected $options;
 
+    /**
+     * 
+     * @var string
+     */
+    protected $releases_folder;
+
     public function __construct($host, $user, $dir, $port = 22 )
     {
         if ('/' !== substr($dir, -1)) {
@@ -113,6 +119,17 @@ class Server implements ServerInterface
     public function getDir()
     {
         return $this->dir;
+    }
+
+    public function getReleasesFolder()
+    {
+        return $this->releases_folder;
+    }
+
+    public function setReleasesFolder( $folder )
+    {
+        $this->releases_folder = rtrim( $folder, '/' ) . '/';
+        return $this;
     }
 
     /**

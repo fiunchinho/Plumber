@@ -4,6 +4,7 @@ namespace Plumber;
 use Plumber\Deployer\DeployerInterface;
 use Plumber\Server\ServerInterface;
 use Plumber\Server\SshCommandExecuter;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class Plumber
 {
@@ -30,10 +31,14 @@ class Plumber
      */
     protected $deployer = array();
 
-    public function __construct( DeployerInterface $deployer, SshCommandExecuter $ssh_commands )
+    public function __construct( DeployerInterface $deployer, EventDispatcherInterface $dispatcher, array $subscribers = array() )
     {
-        $this->deployer = $deployer;
-        $this->ssh      = $ssh_commands;
+        $this->deployer     = $deployer;
+        $this->dispatcher   = $dispatcher;
+
+        foreach ( $subscribers as $subscriber ) {
+            $this->dispatcher->addSubscriber( $subscriber );
+        }
     }
 
     /**
@@ -59,10 +64,20 @@ class Plumber
             throw new \InvalidArgumentException( 'Unknown server: '. $server_name );
         }
 
-        $commands   = ( array_key_exists( 'commands', $options ) ) ? $options['commands'] : array();
-        $dry_run    = ( array_key_exists( 'dry_run', $options ) ) ? $options['dry_run'] : self::DEFAULT_DRY_RUN;
+        $options['commands']            = ( array_key_exists( 'commands', $options ) ) ? $options['commands'] : array();
+        $options['dry_run']             = ( array_key_exists( 'dry_run', $options ) ) ? $options['dry_run'] : self::DEFAULT_DRY_RUN;
+        $options['timestamp_folder']    = ( array_key_exists( 'timestamp_folder', $options ) ) ? $options['timestamp_folder'] : date( 'YmdHis' );
+        // $options['rollback_folder'] = readlink( $this->servers[$server_name]->getDir() );
 
-        $this->deployer->deploy( $this->servers[$server_name], $options ) && !$dry_run && $this->ssh->execute( $this->servers[$server_name], $commands );
+        $this->dispatcher->dispatch(
+            'deploy:pre',
+            new \Plumber\Event\DeployEvent( $this->servers[$server_name], $options )
+        );
+        $this->deployer->deploy( $this->servers[$server_name], $options );
+        $this->dispatcher->dispatch(
+            'deploy:post',
+            new \Plumber\Event\DeployEvent( $this->servers[$server_name], $options )
+        );
 
         return true;
     }

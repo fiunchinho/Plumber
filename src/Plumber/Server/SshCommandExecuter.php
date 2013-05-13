@@ -1,7 +1,9 @@
 <?php
 namespace Plumber\Server;
 
-class SshCommandExecuter
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+
+class SshCommandExecuter implements EventSubscriberInterface
 {
     /**
      * The SSH connection
@@ -26,9 +28,12 @@ class SshCommandExecuter
      * @param array $commands The commands to execute
      * @return boolean 
      */
-    public function execute( ServerInterface $server, array $commands = array() )
+    public function execute( \Plumber\Event\DeployEvent $event )
     {
-        if ( 0 === count( $commands ) ) {
+        $server     = $event->getServer();
+        $options    = $event->getOptions();
+        $commands   = $options['commands'];
+        if ( ( !empty( $options['dry_run'] ) ) || ( 0 === count( $commands ) ) ){
             return true;
         }
 
@@ -50,7 +55,15 @@ class SshCommandExecuter
     protected function executeCommands( array $commands, $path )
     {
         foreach ( $commands as $command ) {
+            echo "\nExecuting... " . 'cd ' . $path . ' && ' . $command . "\n";
             $this->ssh->execute( 'cd ' . $path . ' && ' . $command );
         }
+    }
+
+    public static function getSubscribedEvents()
+    {
+        return array(
+            'deploy:post' => 'execute'
+        );
     }
 }

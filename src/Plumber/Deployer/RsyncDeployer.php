@@ -13,6 +13,14 @@ class RsyncDeployer implements DeployerInterface
      */
     public function deploy( ServerInterface $server, array $options = array() )
     {
+        $cache_folder = '/var/www/plumber/cache/';
+        if ( !is_dir( $cache_folder ) ){
+            $this->executeCommand( 'mkdir -p ' . $cache_folder );
+            $this->executeCommand( 'git clone https://github.com/fiunchinho/Plumber.git ' . $cache_folder );
+        }else{
+            $this->executeCommand( 'cd ' . $cache_folder . ' && git pull' );
+        }
+
         $command = 'rsync ';
         $command .= isset( $options['rsync_options'] ) ? $options['rsync_options'] : '-azC --force --delete --progress';
 
@@ -20,7 +28,7 @@ class RsyncDeployer implements DeployerInterface
             $command .= ' ' . sprintf( '-e "ssh -p%d"', $server->getPort() );
         }
 
-        $command .= ' ./ ' . sprintf( '%s@%s:%s', $server->getUser(), $server->getHost(), $server->getDir() );
+        $command .= ' ' . $cache_folder . ' ' . sprintf( '%s@%s:%s', $server->getUser(), $server->getHost(), $server->getReleasesFolder() . $options['timestamp_folder'] );
 
         if ( isset( $options['rsync_exclude'] ) ){
             $command .= ' ' . sprintf( '--exclude-from \'%s\'', $this->getExcludeFile( $options['rsync_exclude'] ) );

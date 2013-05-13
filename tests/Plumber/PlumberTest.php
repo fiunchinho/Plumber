@@ -11,17 +11,12 @@ class PlumberTest extends \PHPUnit_Framework_TestCase
 	public function testDeployProdServerWhenOnlyProdIsPresent()
 	{
 		$server 	= new Server( 'host', 'root', '/var/www', 22 );
-
-		$commands 	= array( 'pwd' );
-		$options 	= array( 'commands' => $commands );
+		$options 	= array( 'commands' => array(), 'dry_run' => false, 'timestamp_folder' => date( 'YmdHis' ) );
 
 		$deployer = $this->getMock( '\Plumber\Deployer\RsyncDeployer' );
 		$deployer->expects( $this->once() )->method( 'deploy' )->with( $server, $options )->will( $this->returnValue( true ) );
 
-		$ssh = $this->getMock( '\Plumber\Server\SshCommandExecuter', array(), array( $this->getMock( '\Plumber\Server\SshConnection' ) ) );
-		$ssh->expects( $this->once() )->method( 'execute' )->with( $server, $commands )->will( $this->returnValue( true ) );
-
-		$plum = new Plumber( $deployer, $ssh );
+		$plum = new Plumber( $deployer, $this->getMock( '\Symfony\Component\EventDispatcher\EventDispatcher' ) );
 		$plum->addServer( 'prod', $server );
 		$this->assertTrue( $plum->deploy( 'prod', $options ), 'Deploy must be successfull' );
 	}
@@ -30,93 +25,67 @@ class PlumberTest extends \PHPUnit_Framework_TestCase
 	{
 		$prod_server 	= new Server( 'prod', 'root', '/var/www', 22 );
 		$dev_server 	= new Server( 'dev', 'root', '/var/www', 22 );
-
-		$commands 		= array( 'pwd', 'ls', 'whoami' );
-		$options 		= array( 'commands' => $commands );
+		$options 		= array( 'commands' => array(), 'dry_run' => false, 'timestamp_folder' => date( 'YmdHis' ) );
 
 		$deployer = $this->getMock( '\Plumber\Deployer\RsyncDeployer' );
 		$deployer->expects( $this->once() )->method( 'deploy' )->with( $prod_server, $options )->will( $this->returnValue( true ) );
 
-		$ssh = $this->getMock( '\Plumber\Server\SshCommandExecuter', array(), array( $this->getMock( '\Plumber\Server\SshConnection' ) ) );
-		$ssh->expects( $this->once() )->method( 'execute' )->with( $prod_server, $commands )->will( $this->returnValue( true ) );
-
-		$plum = new Plumber( $deployer, $ssh );
+		$plum = new Plumber( $deployer, $this->getMock( '\Symfony\Component\EventDispatcher\EventDispatcher' ) );
 		$plum->addServer( 'prod', $prod_server );
 		$plum->addServer( 'dev', $dev_server );
-		$this->assertTrue( $plum->deploy( 'prod', array( 'commands' => $commands ) ), 'Deploy must be successfull' );
+		$this->assertTrue( $plum->deploy( 'prod', array() ), 'Deploy must be successfull' );
 	}
 
 	public function testDeployDevServerWhenThereAreMoreServers()
 	{
 		$prod_server 	= new Server( 'prod', 'root', '/var/www', 22 );
 		$dev_server 	= new Server( 'dev', 'root', '/var/www', 22 );
-
-		$commands 		= array();
-		$options 		= array( 'commands' => $commands );
+		$options 		= array( 'commands' => array(), 'dry_run' => false, 'timestamp_folder' => date( 'YmdHis' ) );
 
 		$deployer = $this->getMock( '\Plumber\Deployer\RsyncDeployer' );
 		$deployer->expects( $this->once() )->method( 'deploy' )->with( $dev_server, $options )->will( $this->returnValue( true ) );
 
-		$ssh = $this->getMock( '\Plumber\Server\SshCommandExecuter', array(), array( $this->getMock( '\Plumber\Server\SshConnection' ) ) );
-		$ssh->expects( $this->once() )->method( 'execute' )->with( $dev_server, $commands )->will( $this->returnValue( true ) );
-
-		$plum = new Plumber( $deployer, $ssh );
+		$plum = new Plumber( $deployer, $this->getMock( '\Symfony\Component\EventDispatcher\EventDispatcher' ) );
 		$plum->addServer( 'prod', $prod_server );
 		$plum->addServer( 'dev', $dev_server );
-		$this->assertTrue( $plum->deploy( 'dev', $options ), 'Deploy must be successfull' );
-	}
-
-	public function testDeployProdServerUsingDryRun()
-	{
-		$prod_server 	= new Server( 'prod', 'root', '/var/www', 22 );
-		$dev_server 	= new Server( 'dev', 'root', '/var/www', 22 );
-
-		$commands 		= array( 'pwd', 'ls', 'whoami' );
-		$options 		= array( 'dry_run' => true, 'commands' => $commands );
-
-		$deployer = $this->getMock( '\Plumber\Deployer\RsyncDeployer' );
-		$deployer->expects( $this->once() )->method( 'deploy' )->with( $prod_server, $options )->will( $this->returnValue( false ) );
-
-		$ssh = $this->getMock( '\Plumber\Server\SshCommandExecuter', array(), array( $this->getMock( '\Plumber\Server\SshConnection' ) ) );
-		$ssh->expects( $this->never() )->method( 'execute' );
-
-		$plum = new Plumber( $deployer, $ssh );
-		$plum->addServer( 'prod', $prod_server );
-		$plum->addServer( 'dev', $dev_server );
-		$this->assertTrue( $plum->deploy( 'prod', $options ), 'Deploy must be successfull' );
+		$this->assertTrue( $plum->deploy( 'dev', array() ), 'Deploy must be successfull' );
 	}
 
 	public function testDeployServerNotPresent()
 	{
-		$this->setExpectedException( '\InvalidArgumentException' );
-
-		$server = new Server( 'host', 'root', '/var/www', 22 );
-
 		$deployer = $this->getMock( '\Plumber\Deployer\RsyncDeployer' );
 		$deployer->expects( $this->never() )->method( 'deploy' );
 
-		$ssh = $this->getMock( '\Plumber\Server\SshCommandExecuter', array(), array( $this->getMock( '\Plumber\Server\SshConnection' ) ) );
-		$ssh->expects( $this->never() )->method( 'execute' );
-
-		$plum = new Plumber( $deployer, $ssh );
-		$plum->addServer( 'prod', $server );
+		$plum = new Plumber( $deployer, $this->getMock( '\Symfony\Component\EventDispatcher\EventDispatcher' ) );
+		$plum->addServer( 'prod', new Server( 'host', 'root', '/var/www', 22 ) );
+		$this->setExpectedException( '\InvalidArgumentException' );
 		$this->assertTrue( $plum->deploy( 'dev', array() ), 'Deploy must be successfull' );
 	}
 
-	public function testDeployUsingOnlySshCommands()
+	public function testEventsAreDispatched()
 	{
-		$server = new Server( 'host', 'root', '/var/www', 22 );
+		$deployer 	= $this->getMock( '\Plumber\Deployer\NoRsyncDeployer' );
 
-		$commands = array( 'pwd' );
+		$dispatcher = $this->getMock( '\Symfony\Component\EventDispatcher\EventDispatcher' );
+		$dispatcher->expects( $this->exactly(2) )->method( 'dispatch' );
 
-		$deployer = $this->getMock( '\Plumber\Deployer\NoRsyncDeployer' );
-		$deployer->expects( $this->once() )->method( 'deploy' )->will( $this->returnValue( true ) );
+		$plum = new Plumber( $deployer, $dispatcher );
+		$plum->addServer( 'prod', new Server( 'host', 'root', '/var/www', 22 ) );
+		$plum->deploy( 'prod' );
+	}
 
-		$ssh = $this->getMock( '\Plumber\Server\SshCommandExecuter', array(), array( $this->getMock( '\Plumber\Server\SshConnection' ) ) );
-		$ssh->expects( $this->once() )->method( 'execute' )->with( $server, $commands )->will( $this->returnValue( true ) );
+	public function testDeployWithSubscribers()
+	{
+		$server 	= new Server( '91.121.5.9', 'root', '/var/www/plumbertest', 22 );
+		$server->setReleasesFolder( '/var/www/releases' );
 
-		$plum = new Plumber( $deployer, $ssh );
+		$deployer 	= $this->getMock( '\Plumber\Deployer\NoRsyncDeployer' );
+		$dispatcher = new \Symfony\Component\EventDispatcher\EventDispatcher;
+		$ssh_con 	= $this->getMock( '\Plumber\Server\SshConnection' );
+		$ssh_con->expects( $this->once() )->method( 'execute' )->with( sprintf( 'ln -sf %s %s', $server->getReleasesFolder() . date( 'YmdHis' ) . '/', $server->getDir() ) );
+
+		$plum = new Plumber( $deployer, $dispatcher, array( new \Plumber\ReleaseManager( $ssh_con ) ) );
 		$plum->addServer( 'prod', $server );
-		$this->assertTrue( $plum->deploy( 'prod', array( 'commands' => $commands ) ), 'Deploy must be successfull' );
+		$plum->deploy( 'prod', array( 'dry_run' => false ) );
 	}
 }
