@@ -26,7 +26,7 @@ class SshCommandExecuter implements EventSubscriberInterface
 
         foreach ( $commands as $command ) {
             $log->addNotice(
-                "\nExecuting the following command:\n$command\n" . $server->executeCommand( $command ),
+                "\nExecuting the following command:\n$command\n" . $server->executeCommand( 'cd ' . $server->getReleasesFolder() . $options['timestamp_folder'] . ' && ' . $command ),
                 array( 'server' => $server->getHost() )
             );
         }
