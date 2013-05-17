@@ -19,7 +19,7 @@ class ReleaseManager implements EventSubscriberInterface
     	$options 		    = $event->getOptions();
     	$timestamp_folder   = $options['timestamp_folder'];
     	$server 		    = $event->getServer();
-    	$command 		    = sprintf( 'ln -s %s %s', $server->getReleasesFolder() . $timestamp_folder, rtrim( $server->getDir(), '/' ) );
+    	$command 		    = sprintf( 'ln -snf %s %s', $server->getReleasesFolder() . $timestamp_folder, rtrim( $server->getDir(), '/' ) );
     	if ( !empty( $options['dry_run'] ) ){
             return true;
         }

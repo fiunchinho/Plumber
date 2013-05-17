@@ -14,9 +14,13 @@
     ],
     "require": {
         "php": ">=5.3.2",
-        "symfony/event-dispatcher": "2.3.*@dev"
+        "symfony/console": "*",
+        "symfony/event-dispatcher": "*",
+        "symfony/yaml": "*",
+        "monolog/monolog": "*"
     },
     "autoload": {
         "psr-0": { "Plumber": "src/" }
-    }
+    },
+    "minimum-stability": "dev"
 }

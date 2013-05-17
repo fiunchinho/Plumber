@@ -3,42 +3,141 @@
         "This file locks the dependencies of your project to a known state",
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "a9ed23fecb8ea466fba4bf8da3fc9f14",
+    "hash": "221c8e4fb6ad929441af15c74353fe4e",
     "packages": [
         {
-            "name": "symfony/event-dispatcher",
+            "name": "monolog/monolog",
             "version": "dev-master",
-            "target-dir": "Symfony/Component/EventDispatcher",
             "source": {
                 "type": "git",
-                "url": "https://github.com/symfony/EventDispatcher.git",
-                "reference": "v2.3.0-BETA1"
+                "url": "https://github.com/Seldaek/monolog.git",
+                "reference": "ae8500e5b1604963ee63d7bccd6c85808bfea974"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/EventDispatcher/zipball/v2.3.0-BETA1",
-                "reference": "v2.3.0-BETA1",
+                "url": "https://api.github.com/repos/Seldaek/monolog/zipball/ae8500e5b1604963ee63d7bccd6c85808bfea974",
+                "reference": "ae8500e5b1604963ee63d7bccd6c85808bfea974",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0",
+                "psr/log": ">=1.0,<2.0"
+            },
+            "require-dev": {
+                "doctrine/couchdb": "dev-master",
+                "mlehner/gelf-php": "1.0.*",
+                "raven/raven": "0.3.*"
+            },
+            "suggest": {
+                "doctrine/couchdb": "Allow sending log messages to a CouchDB server",
+                "ext-amqp": "Allow sending log messages to an AMQP server (1.0+ required)",
+                "ext-mongo": "Allow sending log messages to a MongoDB server",
+                "mlehner/gelf-php": "Allow sending log messages to a GrayLog2 server",
+                "raven/raven": "Allow sending log messages to a Sentry server"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.5.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "Monolog": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jordi Boggiano",
+                    "email": "j.boggiano@seld.be",
+                    "homepage": "http://seld.be",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Sends your logs to files, sockets, inboxes, databases and various web services",
+            "homepage": "http://github.com/Seldaek/monolog",
+            "keywords": [
+                "log",
+                "logging",
+                "psr-3"
+            ],
+            "time": "2013-05-13 14:29:58"
+        },
+        {
+            "name": "psr/log",
+            "version": "1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/php-fig/log",
+                "reference": "1.0.0"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://github.com/php-fig/log/archive/1.0.0.zip",
+                "reference": "1.0.0",
+                "shasum": ""
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Psr\\Log\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "PHP-FIG",
+                    "homepage": "http://www.php-fig.org/"
+                }
+            ],
+            "description": "Common interface for logging libraries",
+            "keywords": [
+                "log",
+                "psr",
+                "psr-3"
+            ],
+            "time": "2012-12-21 11:40:51"
+        },
+        {
+            "name": "symfony/console",
+            "version": "dev-master",
+            "target-dir": "Symfony/Component/Console",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/Console.git",
+                "reference": "c53f2a94430f1958c115cfa29c2da9867a5a6946"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/Console/zipball/c53f2a94430f1958c115cfa29c2da9867a5a6946",
+                "reference": "c53f2a94430f1958c115cfa29c2da9867a5a6946",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.3"
             },
             "require-dev": {
-                "symfony/dependency-injection": ">=2.0,<3.0"
+                "symfony/event-dispatcher": ">=2.1,<3.0"
             },
             "suggest": {
-                "symfony/dependency-injection": "2.2.*",
-                "symfony/http-kernel": "2.2.*"
+                "symfony/event-dispatcher": ""
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.3-dev"
+                    "dev-master": "2.4-dev"
                 }
             },
             "autoload": {
                 "psr-0": {
-                    "Symfony\\Component\\EventDispatcher\\": ""
+                    "Symfony\\Component\\Console\\": ""
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -55,9 +154,9 @@
                     "homepage": "http://symfony.com/contributors"
                 }
             ],
-            "description": "Symfony EventDispatcher Component",
+            "description": "Symfony Console Component",
             "homepage": "http://symfony.com",
-            "time": "2013-02-11 11:27:01"
+            "time": "2013-05-16 07:54:39"
         },
         {
             "name": "symfony/event-dispatcher",
@@ -66,12 +165,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/EventDispatcher.git",
-                "reference": "v2.3.0-BETA1"
+                "reference": "4b34aad44d0a2d91f301ee967151ce0980f39930"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/EventDispatcher/zipball/v2.3.0-BETA1",
-                "reference": "v2.3.0-BETA1",
+                "url": "https://api.github.com/repos/symfony/EventDispatcher/zipball/4b34aad44d0a2d91f301ee967151ce0980f39930",
+                "reference": "4b34aad44d0a2d91f301ee967151ce0980f39930",
                 "shasum": ""
             },
             "require": {
@@ -81,13 +180,13 @@
                 "symfony/dependency-injection": ">=2.0,<3.0"
             },
             "suggest": {
-                "symfony/dependency-injection": "2.2.*",
-                "symfony/http-kernel": "2.2.*"
+                "symfony/dependency-injection": "",
+                "symfony/http-kernel": ""
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.3-dev"
+                    "dev-master": "2.4-dev"
                 }
             },
             "autoload": {
@@ -111,7 +210,54 @@
             ],
             "description": "Symfony EventDispatcher Component",
             "homepage": "http://symfony.com",
-            "time": "2013-02-11 11:27:01"
+            "time": "2013-05-16 07:54:39"
+        },
+        {
+            "name": "symfony/yaml",
+            "version": "dev-master",
+            "target-dir": "Symfony/Component/Yaml",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/Yaml.git",
+                "reference": "82100c7732c95452702d11433aad50988700d36c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/Yaml/zipball/82100c7732c95452702d11433aad50988700d36c",
+                "reference": "82100c7732c95452702d11433aad50988700d36c",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.3"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.4-dev"
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "Symfony\\Component\\Yaml\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "http://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony Yaml Component",
+            "homepage": "http://symfony.com",
+            "time": "2013-05-16 07:54:39"
         }
     ],
     "packages-dev": [
@@ -120,10 +266,10 @@
     "aliases": [
 
     ],
-    "minimum-stability": "stable",
-    "stability-flags": {
-        "symfony/event-dispatcher": 20
-    },
+    "minimum-stability": "dev",
+    "stability-flags": [
+
+    ],
     "platform": {
         "php": ">=5.3.2"
     },

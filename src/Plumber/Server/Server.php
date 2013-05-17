@@ -65,6 +65,13 @@ class Server implements ServerInterface
      */
     protected $releases_folder;
 
+    /**
+     * The SSH connection
+     *
+     * @var ressource
+     */
+    protected $ssh;
+
     public function __construct($host, $user, $dir, $port = 22 )
     {
         if ('/' !== substr($dir, -1)) {
@@ -75,6 +82,7 @@ class Server implements ServerInterface
         $this->user     = $user;
         $this->port     = $port;
         $this->dir      = $dir;
+        $this->ssh      = new SshConnection;
     }
 
     public function getPublicKey()
@@ -151,5 +159,12 @@ class Server implements ServerInterface
     public function setPassword( $password )
     {
         $this->password = $password;
+    }
+
+    public function executeCommand( $command )
+    {
+        $this->ssh->connect( $this->getHost(), $this->getPort() );
+        $this->ssh->authenticate( $this->getUser(), $this->getPublicKey(), $this->getPrivateKey() );
+        return $this->ssh->execute( 'cd ' . $this->getDir() . ' && ' . $command );
     }
 }

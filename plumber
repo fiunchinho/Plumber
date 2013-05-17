@@ -1,0 +1,42 @@
+#!/usr/bin/env php
+<?php
+require_once __DIR__ . '/vendor/autoload.php';
+
+// app/console
+
+use Symfony\Component\Console\Application;
+
+$application = new Application();
+$application->add(new \Plumber\Command\DeployCommand);
+$application->add(new \Plumber\Command\RollbackCommand);
+$application->run();
+/*
+$server 	= new \Plumber\Server\Server( '91.121.5.9', 'root', '/var/www/plumbertest/current', 22 );
+$server->setReleasesFolder( '/var/www/plumbertest/releases' );
+$server->setPublicKey( '/home/vagrant/.ssh/id_rsa.pub' );
+$server->setPrivateKey( '/home/vagrant/.ssh/id_rsa' );
+
+$plum = new \Plumber\Plumber(
+	new \Plumber\Deployer\RsyncDeployer,
+	new \Symfony\Component\EventDispatcher\EventDispatcher,
+	array(
+		new \Plumber\ReleaseManager( new \Plumber\Server\SshConnection ),
+		new \Plumber\Server\SshCommandExecuter( new \Plumber\Server\SshConnection )
+	)
+);
+
+$plum->addServer( 'prod', $server );
+$plum->deploy(
+	'prod', array(
+		'dry_run' => false,
+		'rsync_exclude' => '/var/www/plumber/rsync.excludes',
+		'releases_to_keep' => 3,
+		'commands' => array(
+			'composer install',
+			// 'rm -rf cache/twig',
+		)
+	)
+);
+*/
+
+

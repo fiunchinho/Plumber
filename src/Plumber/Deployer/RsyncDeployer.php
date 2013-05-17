@@ -16,7 +16,8 @@ class RsyncDeployer implements DeployerInterface
         $cache_folder = '/var/www/plumber/cache/';
         if ( !is_dir( $cache_folder ) ){
             $this->executeCommand( 'mkdir -p ' . $cache_folder );
-            $this->executeCommand( 'git clone https://github.com/fiunchinho/Plumber.git ' . $cache_folder );
+            $this->executeCommand( 'git clone ' . $optins['repository'] . $cache_folder );
+            //$this->executeCommand( 'git clone -b event_listener https://github.com/fiunchinho/Plumber.git ' . $cache_folder );
         }else{
             $this->executeCommand( 'cd ' . $cache_folder . ' && git pull' );
         }
@@ -52,18 +53,13 @@ class RsyncDeployer implements DeployerInterface
     }
 
     /**
-     * @return string The deployer identifier
-     */
-    public function getName()
-    {
-        return 'rsync';
-    }
-
-    /**
      * Method to execute a command in the system. We need it to execute rsycn in the operating system.
      */
     public function executeCommand( $command )
     {
-        return system($command);
+        $output = '';
+        $returnValue = -1;
+        return exec( $command, $output, $returnValue );
+        // return system( $command, $output );
     }
 }
